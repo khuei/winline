@@ -1,6 +1,6 @@
 # winline
 
-Asyncify version of Greg Hurrell's, @wincent, zsh prompt
+Asyncify version of Greg Hurrell's [zsh prompt](https://github.com/wincent/wincent)
 
 ## Feature
 
