@@ -57,6 +57,27 @@ If there are background processes, a yellow asterisk is shown:
 - My friends request me to extract this prompt from my dotfiles to a separate repository (￣▽￣)
 - Async is great for working with large repository (ex: https://github.com/gentoo/gentoo)
 
+## Installation
+
+1. Clone this repository
+``` sh
+$ git clone https://github.com/Z5483/winline.git
+```
+
+2. Add the repository to `$fpath` in `.zshrc`
+``` sh
+fpath+=/path/to/winline
+```
+
+3. source either `winline.zsh` or `winline.plugin.zsh` in `.zshrc`
+``` sh
+. /path/to/winline.zsh
+
+# or
+
+. /path/to/winline.plugin.zsh
+```
+
 ## Fallback
 
 This prompt is heavily tailored to my needs so it is not very customizable
