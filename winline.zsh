@@ -1,10 +1,5 @@
 #!/usr/bin/env zsh
 
-prompt_window_title_setup() {
-	local CMD="${1:gs/$/\\$}"
-	print -Pn "\033]0;$CMD:q\a"
-}
-
 prompt_preexec() {
 	typeset -Fg SECONDS
 	ZSH_START_TIME=${ZSH_START_TIME:-$SECONDS}
@@ -14,12 +9,6 @@ prompt_preexec() {
 	case $TTY in
 		/dev/ttyS[0-9]*) return ;;
 	esac
-
-	if [ -n "$TMUX" ]; then
-		prompt_window_title_setup "$2"
-	else
-		prompt_window_title_setup "$(basename "$PWD") > $2"
-	fi
 }
 
 prompt_precmd() {
@@ -52,18 +41,6 @@ prompt_precmd() {
 	else
 		export RPS3="%F{blue}%~%f"
 	fi
-
-	if [ "$HISTCMD_LOCAL" -eq 0 ]; then
-		prompt_window_title_setup "$(basename "$PWD")"
-	else
-		local LAST="$(history | tail -1 | awk '{print $2}')"
-		if [ -n "$TMUX" ]; then
-			prompt_window_title_setup "$LAST"
-		else
-			prompt_window_title_setup "$(basename "$PWD") > $LAST"
-		fi
-	fi
-
 }
 
 prompt_chpwd() {
@@ -83,14 +60,14 @@ prompt_async_precmd() {
 prompt_git_info() {
 	local REPLY=
 	{
-		local is_gitdir=false is_modified=false has_unstaged=false has_untracked=false
+		local is_modified=false has_unstaged=false has_untracked=false
 
-		[ -n "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ] && is_gitdir=true
-		[ -n "$(git diff 2>/dev/null)" ] && is_modified=true
-		[ -n "$(git diff --cached 2>/dev/null)" ] && has_staged=true
-		[ -n "$(git ls-files --others 2>/dev/null)" ] && has_untracked=true
+		if [ -d ".git" ]; then
+			[ -n "$(git diff 2>/dev/null)" ] && is_modified=true
+			[ -n "$(git diff --cached 2>/dev/null)" ] && has_staged=true
+			[ -n "$(git ls-files --exclude-standard --others 2>/dev/null)" ] && 
+				has_untracked=true
 
-		if $is_gitdir; then
 			REPLY="[$(git branch --show-current 2>/dev/null)"
 
 			[ "$has_staged" = true ] && REPLY="$REPLY%F{green}●%f"
@@ -104,20 +81,20 @@ prompt_git_info() {
 	}
 }
 
-zle -N prompt_async_callback
 prompt_async_callback() {
 	local fd=$1 REPLY
 	{
 		zle -F "$fd"
 		read -ru $fd
-		[[ $RPS1 == $REPLY ]] && return
-		RPS1=$REPLY
+		[[ $RPROMPT == $REPLY ]] && return
+		RPROMPT=$REPLY
 		zle && [[ $CONTEXT == start ]] &&
 		zle .reset-prompt
 	} always {
 		exec {fd}<&-
 	}
 }
+zle -N prompt_async_callback
 
 prompt_init() {
 	setopt PROMPT_SUBST
@@ -146,3 +123,5 @@ prompt_init() {
 	add-zsh-hook precmd prompt_precmd
 	add-zsh-hook precmd prompt_async_precmd
 }
+
+prompt_init
