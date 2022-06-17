@@ -45,7 +45,7 @@ prompt_precmd() {
 
 prompt_chpwd() {
 	zle && zle -I
-	RPS2=
+	export RPROMPT=
 	zle && [[ $CONTEXT == start ]] && prompt_async
 	true
 }
@@ -91,6 +91,7 @@ prompt_async_callback() {
 		zle && [[ $CONTEXT == start ]] &&
 		zle .reset-prompt
 	} always {
+		export RPROMPT=
 		exec {fd}<&-
 	}
 }
