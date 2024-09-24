@@ -54,14 +54,13 @@ If there are background processes, a yellow asterisk is shown:
 
 ## Why
 
-- My friends request me to extract this prompt from my dotfiles to a separate repository (￣▽￣)
 - Async is great for working with large repository (ex: https://github.com/gentoo/gentoo)
 
 ## Installation
 
 1. Clone this repository
 ``` sh
-$ git clone https://github.com/Z5483/winline.git
+$ git clone https://github.com/khuei/winline.git
 ```
 
 2. Add the repository to `$fpath` in `.zshrc`
